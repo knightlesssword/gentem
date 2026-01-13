@@ -44,7 +44,8 @@ dev = [
 gentem = "gentem.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["app"]
+where = ["src"]
+include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
