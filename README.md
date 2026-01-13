@@ -1,5 +1,15 @@
 # Gentem
 
+![Python Version](https://img.shields.io/pypi/pyversions/gentem)
+![License](https://img.shields.io/pypi/l/gentem)
+![PyPI Version](https://img.shields.io/pypi/v/gentem)
+![PyPI Status](https://img.shields.io/pypi/status/gentem)
+
+![Downloads](https://img.shields.io/pypi/dm/gentem)
+![Last Commit](https://img.shields.io/github/last-commit/knightlesssword/gentem)
+![Contributors](https://img.shields.io/github/contributors/knightlesssword/gentem)
+
+
 A Python CLI template boilerplate generator for quickly scaffolding Python projects.
 
 ## Features
