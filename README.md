@@ -29,7 +29,7 @@ pip install gentem
 Or install from source:
 
 ```bash
-git clone https://github.com/gentem/gentem.git
+git clone https://github.com/knightlesssword/gentem.git
 cd gentem
 pip install -e .
 ```
