@@ -221,6 +221,7 @@ def create_fastapi_project_files(
         "fastapi>=0.104.0",
         "uvicorn[standard]>=0.24.0",
         "pydantic>=2.5.0",
+        "pydantic-settings>=2.0.0",
         "python-multipart>=0.0.6",
     ]
 
