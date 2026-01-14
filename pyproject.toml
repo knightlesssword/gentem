@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gentem"
-version = "0.1.2"
+version = "0.1.3"
 description = "A Python CLI template boilerplate generator"
 readme = "README.md"
 license = {text = "MIT"}
@@ -45,7 +45,7 @@ gentem = "gentem.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["app*"]
+include = ["gentem*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

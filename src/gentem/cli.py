@@ -1,7 +1,5 @@
 """Main CLI entry point for Gentem."""
 
-import sys
-
 import typer
 
 from gentem import __version__
@@ -106,13 +104,13 @@ def fastapi_command(
     async_mode: bool = typer.Option(
         False,
         "--async",
-        "-a",
+        "-A",
         help="Use async mode with lifespan.",
     ),
     db_type: str = typer.Option(
         "",
         "--db",
-        "-d",
+        "-D",
         help="Database type: asyncpg (for async SQLAlchemy).",
     ),
     author: str = typer.Option(
