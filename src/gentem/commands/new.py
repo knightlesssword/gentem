@@ -2,19 +2,15 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from rich import print
 from rich.panel import Panel
-from rich.table import Table
 
-from gentem.template_engine import TemplateEngine, get_template_engine
 from gentem.utils.validators import (
     ValidationError,
     validate_license_type,
     validate_project_name,
     validate_project_type,
-    validate_output_path,
 )
 
 
@@ -84,7 +80,7 @@ def get_license_content(license_type: str, context: dict) -> str:
     license_type = license_type.lower()
 
     if license_type == "mit":
-        return f'''MIT License
+        return f"""MIT License
 
 Copyright (c) {context["year"]} {context["author"]}
 
@@ -105,9 +101,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-'''
+"""
     elif license_type == "apache":
-        return f'''Apache License
+        return """Apache License
 Version 2.0, January 2004
 http://www.apache.org/
 
@@ -262,9 +258,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
 implied. See the License for the specific language governing
 permissions and limitations under the License.
-'''
+"""
     elif license_type == "gpl":
-        return f'''GNU GENERAL PUBLIC LICENSE
+        return f"""GNU GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 
 Copyright (C) {context["year"]} {context["author"]}
@@ -281,9 +277,9 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
-'''
+"""
     elif license_type == "bsd":
-        return f'''BSD 3-Clause License
+        return f"""BSD 3-Clause License
 
 Copyright (c) {context["year"]} {context["author"]}
 
@@ -311,7 +307,7 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
+"""
     else:
         return ""
 
@@ -343,7 +339,7 @@ def create_new_project(
         license_type = validate_license_type(license_type)
     except ValidationError as e:
         print(f"[red]Error: {e}[/]")
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
     # Generate template context
     context = generate_context(
@@ -362,14 +358,16 @@ def create_new_project(
         print(f"Project type: {project_type}")
 
     # Show summary
-    print(Panel(
-        f"[bold]Creating new {project_type} project:[/] [cyan]{project_name}[/]\n"
-        f"[dim]Author:[/] {context['author']}\n"
-        f"[dim]License:[/] {context['license']}\n"
-        f"[dim]Python:[/] {', '.join(context['python_versions'])}",
-        title="Gentem",
-        expand=False,
-    ))
+    print(
+        Panel(
+            f"[bold]Creating new {project_type} project:[/] [cyan]{project_name}[/]\n"
+            f"[dim]Author:[/] {context['author']}\n"
+            f"[dim]License:[/] {context['license']}\n"
+            f"[dim]Python:[/] {', '.join(context['python_versions'])}",
+            title="Gentem",
+            expand=False,
+        )
+    )
 
     if dry_run:
         print("[yellow]DRY RUN - No files will be created[/]")
@@ -389,17 +387,17 @@ def create_new_project(
             license_content=get_license_content(license_type, context),
         )
         print(f"\n[green]✓ Project '{project_name}' created successfully![/]")
-        print(f"\nNext steps:")
+        print("\nNext steps:")
         print(f"  cd {project_name}")
         if project_type == "library":
-            print(f"  pip install -e .")
+            print("  pip install -e .")
         elif project_type == "cli":
-            print(f"  pip install -e .")
+            print("  pip install -e .")
             print(f"  {project_name} --help")
-        print(f"  git init")
+        print("  git init")
     except Exception as e:
         print(f"[red]Error creating project: {e}[/]")
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 def get_project_files(project_name: str, project_type: str) -> list[str]:
@@ -422,24 +420,30 @@ def get_project_files(project_name: str, project_type: str) -> list[str]:
     ]
 
     if project_type == "library":
-        files.extend([
-            f"{project_name}/app/",
-            f"{project_name}/app/__init__.py",
-            f"{project_name}/tests/",
-            f"{project_name}/tests/__init__.py",
-            f"{project_name}/tests/test_{slug}.py",
-        ])
+        files.extend(
+            [
+                f"{project_name}/app/",
+                f"{project_name}/app/__init__.py",
+                f"{project_name}/tests/",
+                f"{project_name}/tests/__init__.py",
+                f"{project_name}/tests/test_{slug}.py",
+            ]
+        )
     elif project_type == "cli":
-        files.extend([
-            f"{project_name}/app/",
-            f"{project_name}/app/__init__.py",
-            f"{project_name}/app/cli.py",
-            f"{project_name}/app/main.py",
-        ])
+        files.extend(
+            [
+                f"{project_name}/app/",
+                f"{project_name}/app/__init__.py",
+                f"{project_name}/app/cli.py",
+                f"{project_name}/app/main.py",
+            ]
+        )
     elif project_type == "script":
-        files.extend([
-            f"{project_name}/{slug}.py",
-        ])
+        files.extend(
+            [
+                f"{project_name}/{slug}.py",
+            ]
+        )
 
     return files
 
@@ -467,7 +471,7 @@ def create_project_files(
 
     # Create pyproject.toml
     scripts_line = f'{slug} = "{slug}.main:main"' if project_type == "cli" else ""
-    pyproject_content = f'''[build-system]
+    pyproject_content = f"""[build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
@@ -515,10 +519,10 @@ target-version = ["py39", "py310", "py311", "py312"]
 line-length = 100
 select = ["E", "W", "F", "I", "B", "C4", "UP"]
 ignore = ["E501", "B008", "C901"]
-'''
+"""
 
     # Create README.md
-    readme_content = f'''# {project_name}
+    readme_content = f"""# {project_name}
 
 {context["description"]}
 
@@ -551,10 +555,10 @@ ruff check --fix .
 ## License
 
 This project is licensed under the {context["license"]} License - see the [LICENSE](LICENSE) file for details.
-'''
+"""
 
     # Create .gitignore
-    gitignore_content = '''# Byte-compiled / optimized / DLL files
+    gitignore_content = """# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -688,7 +692,7 @@ dmypy.json
 # OS
 .DS_Store
 Thumbs.db
-'''
+"""
 
     # Write common files
     (output_path / "pyproject.toml").write_text(pyproject_content, encoding="utf-8")
@@ -701,12 +705,15 @@ Thumbs.db
     if project_type == "library":
         app_dir = output_path / "app"
         app_dir.mkdir(parents=True, exist_ok=True)
-        (app_dir / "__init__.py").write_text(f'"""{project_name} - {context["description"]}."""\n', encoding="utf-8")
+        (app_dir / "__init__.py").write_text(
+            f'"""{project_name} - {context["description"]}."""\n', encoding="utf-8"
+        )
 
         tests_dir = output_path / "tests"
         tests_dir.mkdir(parents=True, exist_ok=True)
         (tests_dir / "__init__.py").write_text('"""Tests for app."""\n', encoding="utf-8")
-        (tests_dir / f"test_{slug}.py").write_text(f'''"""Tests for {slug}."""
+        (tests_dir / f"test_{slug}.py").write_text(
+            f'''"""Tests for {slug}."""
 
 import pytest
 
@@ -722,14 +729,19 @@ def test_import():
     """Test that the package can be imported."""
     import app
     assert app is not None
-''', encoding="utf-8")
+''',
+            encoding="utf-8",
+        )
 
     elif project_type == "cli":
         app_dir = output_path / "app"
         app_dir.mkdir(parents=True, exist_ok=True)
 
-        (app_dir / "__init__.py").write_text(f'"""{project_name} - {context["description"]}."""\n', encoding="utf-8")
-        (app_dir / "cli.py").write_text(f'''"""CLI commands for {project_name}."""
+        (app_dir / "__init__.py").write_text(
+            f'"""{project_name} - {context["description"]}."""\n', encoding="utf-8"
+        )
+        (app_dir / "cli.py").write_text(
+            f'''"""CLI commands for {project_name}."""
 
 import typer
 
@@ -746,8 +758,11 @@ def hello(name: str = "World") -> None:
 def version() -> None:
     """Show the version."""
     print("{context["version"]}")
-''', encoding="utf-8")
-        (app_dir / "main.py").write_text(f'''"""Main entry point for {project_name}."""
+''',
+            encoding="utf-8",
+        )
+        (app_dir / "main.py").write_text(
+            f'''"""Main entry point for {project_name}."""
 
 from app.cli import app
 
@@ -755,10 +770,13 @@ from app.cli import app
 def main() -> None:
     """Entry point for the CLI."""
     app()
-''', encoding="utf-8")
+''',
+            encoding="utf-8",
+        )
 
     elif project_type == "script":
-        (output_path / f"{slug}.py").write_text(f'''#!/usr/bin/env python3
+        (output_path / f"{slug}.py").write_text(
+            f'''#!/usr/bin/env python3
 """{project_name} - {context["description"]}."""
 
 def main() -> None:
@@ -768,4 +786,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-''', encoding="utf-8")
+''',
+            encoding="utf-8",
+        )

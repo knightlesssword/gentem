@@ -2,17 +2,15 @@
 
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from jinja2 import (
-    BaseLoader,
     Environment,
     FileSystemLoader,
     TemplateSyntaxError,
     UndefinedError,
 )
-from rich import print
-from rich.panel import Panel
+from jinja2.environment import Template
 from rich.tree import Tree
 
 
@@ -40,7 +38,7 @@ class TemplateEngine:
             lstrip_blocks=True,
         )
 
-    def get_template(self, template_path: str) -> "jinja2.Template":
+    def get_template(self, template_path: str) -> Template:
         """Get a template by path.
 
         Args:
@@ -67,7 +65,7 @@ class TemplateEngine:
     def render_template(
         self,
         template_path: str,
-        context: Dict[str, Any],
+        context: dict[str, Any],
     ) -> str:
         """Render a template with the given context.
 
@@ -84,7 +82,7 @@ class TemplateEngine:
     def render_file(
         self,
         template_path: str,
-        context: Dict[str, Any],
+        context: dict[str, Any],
         output_path: Path,
     ) -> None:
         """Render a template to a file.
@@ -130,7 +128,7 @@ class TemplateEngine:
     def preview_tree(
         self,
         template_paths: list[str],
-        context: Dict[str, Any],
+        context: dict[str, Any],
     ) -> Tree:
         """Preview the file tree that would be generated.
 
@@ -151,9 +149,7 @@ class TemplateEngine:
 
             # Render the path with context
             try:
-                rendered_path = self.render_template(
-                    f"_paths/{output_path}.path.j2", context
-                )
+                rendered_path = self.render_template(f"_paths/{output_path}.path.j2", context)
             except Exception:
                 # Fallback to template path
                 rendered_path = output_path

@@ -197,6 +197,7 @@ def init_command(
         verbose=verbose,
     )
 
+
 def main():
     app()
 

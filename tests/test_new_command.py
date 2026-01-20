@@ -1,18 +1,11 @@
 """Tests for the new command module."""
 
-import os
-import tempfile
-from pathlib import Path
-from unittest.mock import patch
-
-import pytest
-
 from gentem.commands.new import (
-    generate_slug,
     generate_class_name,
     generate_context,
-    get_project_files,
+    generate_slug,
     get_license_content,
+    get_project_files,
 )
 
 
@@ -120,30 +113,30 @@ class TestGetProjectFiles:
         """Test file list for library project."""
         files = get_project_files("mylib", "library")
 
-        assert f"mylib/" in files
-        assert f"mylib/pyproject.toml" in files
-        assert f"mylib/app/" in files
-        assert f"mylib/app/__init__.py" in files
-        assert f"mylib/tests/" in files
-        assert f"mylib/tests/test_mylib.py" in files
+        assert "mylib/" in files
+        assert "mylib/pyproject.toml" in files
+        assert "mylib/app/" in files
+        assert "mylib/app/__init__.py" in files
+        assert "mylib/tests/" in files
+        assert "mylib/tests/test_mylib.py" in files
 
     def test_cli_files(self):
         """Test file list for CLI project."""
         files = get_project_files("mycli", "cli")
 
-        assert f"mycli/" in files
-        assert f"mycli/pyproject.toml" in files
-        assert f"mycli/app/" in files
-        assert f"mycli/app/__init__.py" in files
-        assert f"mycli/app/cli.py" in files
-        assert f"mycli/app/main.py" in files
+        assert "mycli/" in files
+        assert "mycli/pyproject.toml" in files
+        assert "mycli/app/" in files
+        assert "mycli/app/__init__.py" in files
+        assert "mycli/app/cli.py" in files
+        assert "mycli/app/main.py" in files
 
     def test_script_files(self):
         """Test file list for script project."""
         files = get_project_files("myscript", "script")
 
-        assert f"myscript/" in files
-        assert f"myscript/myscript.py" in files
+        assert "myscript/" in files
+        assert "myscript/myscript.py" in files
         assert "src/" not in files
         assert "tests/" not in files
 

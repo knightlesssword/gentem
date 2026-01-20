@@ -1,7 +1,5 @@
 """Interactive wizard for creating projects with guided prompts."""
 
-from datetime import datetime
-from pathlib import Path
 from typing import Optional
 
 import questionary
@@ -12,22 +10,22 @@ from rich.panel import Panel
 from gentem.commands.new import create_new_project
 from gentem.utils.validators import (
     ValidationError,
-    validate_license_type,
     validate_project_name,
 )
 
-
 # Custom questionary style
-custom_style = Style([
-    ("qmark", "fg:#673AB7 bold"),
-    ("answer", "fg:#2196F3 bold"),
-    ("pointer", "fg:#673AB7 bold"),
-    ("highlighted", "fg:#673AB7 bold"),
-    ("selected", "fg:#4CAF50 bold"),
-    ("separator", "fg:#6B6B6B"),
-    ("instruction", "fg:#9E9E9E"),
-    ("text", "fg:#FFFFFF"),
-])
+custom_style = Style(
+    [
+        ("qmark", "fg:#673AB7 bold"),
+        ("answer", "fg:#2196F3 bold"),
+        ("pointer", "fg:#673AB7 bold"),
+        ("highlighted", "fg:#673AB7 bold"),
+        ("selected", "fg:#4CAF50 bold"),
+        ("separator", "fg:#6B6B6B"),
+        ("instruction", "fg:#9E9E9E"),
+        ("text", "fg:#FFFFFF"),
+    ]
+)
 
 
 def get_project_name() -> str:
@@ -36,9 +34,9 @@ def get_project_name() -> str:
         name = questionary.text(
             "Project name:",
             style=custom_style,
-            validate=lambda x: bool(x.strip()) or "Project name cannot be empty"
+            validate=lambda x: bool(x.strip()) or "Project name cannot be empty",
         ).ask()
-        
+
         if name:
             try:
                 validate_project_name(name)
@@ -49,18 +47,24 @@ def get_project_name() -> str:
 
 def get_description() -> str:
     """Prompt for project description."""
-    return questionary.text(
-        "Description (optional):",
-        style=custom_style,
-    ).ask() or ""
+    return (
+        questionary.text(
+            "Description (optional):",
+            style=custom_style,
+        ).ask()
+        or ""
+    )
 
 
 def get_author() -> str:
     """Prompt for author name."""
-    return questionary.text(
-        "Author name (optional):",
-        style=custom_style,
-    ).ask() or ""
+    return (
+        questionary.text(
+            "Author name (optional):",
+            style=custom_style,
+        ).ask()
+        or ""
+    )
 
 
 def get_project_type() -> str:
@@ -88,9 +92,9 @@ def get_python_versions() -> list[str]:
             {"name": "3.12", "value": "3.12", "checked": False},
         ],
         style=custom_style,
-        validate=lambda x: len(x) >= 1 or "Select at least one Python version"
+        validate=lambda x: len(x) >= 1 or "Select at least one Python version",
     ).ask()
-    
+
     return versions or ["3.10"]
 
 
@@ -111,28 +115,18 @@ def get_license() -> str:
 
 def get_add_cli() -> bool:
     """Prompt for CLI support."""
-    return questionary.confirm(
-        "Add CLI support?",
-        style=custom_style,
-        default=False
-    ).ask()
+    return questionary.confirm("Add CLI support?", style=custom_style, default=False).ask()
 
 
 def get_add_docker() -> bool:
     """Prompt for Docker support."""
-    return questionary.confirm(
-        "Add Docker support?",
-        style=custom_style,
-        default=False
-    ).ask()
+    return questionary.confirm("Add Docker support?", style=custom_style, default=False).ask()
 
 
 def get_add_docs() -> bool:
     """Prompt for documentation support."""
     return questionary.confirm(
-        "Add documentation (MkDocs)?",
-        style=custom_style,
-        default=False
+        "Add documentation (MkDocs)?", style=custom_style, default=False
     ).ask()
 
 
@@ -179,11 +173,9 @@ def get_ci_provider() -> str:
 def get_fastapi_options() -> dict:
     """Prompt for FastAPI-specific options."""
     async_mode = questionary.confirm(
-        "Use async mode with lifespan?",
-        style=custom_style,
-        default=True
+        "Use async mode with lifespan?", style=custom_style, default=True
     ).ask()
-    
+
     db_type = questionary.select(
         "Database support:",
         choices=[
@@ -193,7 +185,7 @@ def get_fastapi_options() -> dict:
         ],
         style=custom_style,
     ).ask()
-    
+
     return {
         "async_mode": async_mode,
         "db_type": db_type or "",
@@ -217,46 +209,48 @@ def show_preview(
 ) -> bool:
     """Show a preview of the project configuration and ask for confirmation."""
     print("\n")
-    
+
     preview_lines = [
         f"[bold]Project Name:[/] {project_name}",
         f"[bold]Type:[/] {project_type}",
     ]
-    
+
     if description:
         preview_lines.append(f"[bold]Description:[/] {description}")
-    
-    preview_lines.extend([
-        f"[bold]Author:[/] {author or 'Not specified'}",
-        f"[bold]License:[/] {license_type.upper()}",
-        f"[bold]Python Versions:[/] {', '.join(python_versions)}",
-        f"[bold]CLI Support:[/] {'Yes' if add_cli else 'No'}",
-        f"[bold]Docker Support:[/] {'Yes' if add_docker else 'No'}",
-        f"[bold]Documentation:[/] {'Yes' if add_docs else 'No'}",
-        f"[bold]Testing:[/] {testing_framework}",
-        f"[bold]Linting:[/] {linting}",
-        f"[bold]CI/CD:[/] {ci_provider}",
-    ])
-    
+
+    preview_lines.extend(
+        [
+            f"[bold]Author:[/] {author or 'Not specified'}",
+            f"[bold]License:[/] {license_type.upper()}",
+            f"[bold]Python Versions:[/] {', '.join(python_versions)}",
+            f"[bold]CLI Support:[/] {'Yes' if add_cli else 'No'}",
+            f"[bold]Docker Support:[/] {'Yes' if add_docker else 'No'}",
+            f"[bold]Documentation:[/] {'Yes' if add_docs else 'No'}",
+            f"[bold]Testing:[/] {testing_framework}",
+            f"[bold]Linting:[/] {linting}",
+            f"[bold]CI/CD:[/] {ci_provider}",
+        ]
+    )
+
     if project_type == "fastapi" and fastapi_options:
-        preview_lines.extend([
-            f"[bold]Async Mode:[/] {'Yes' if fastapi_options.get('async_mode') else 'No'}",
-            f"[bold]Database:[/] {fastapi_options.get('db_type') or 'None'}",
-        ])
-    
+        preview_lines.extend(
+            [
+                f"[bold]Async Mode:[/] {'Yes' if fastapi_options.get('async_mode') else 'No'}",
+                f"[bold]Database:[/] {fastapi_options.get('db_type') or 'None'}",
+            ]
+        )
+
     preview_text = "\n".join(preview_lines)
-    
-    print(Panel(
-        f"[bold cyan]Project Configuration[/]\n\n{preview_text}",
-        title="Gentem",
-        expand=False,
-    ))
-    
-    return questionary.confirm(
-        "\nCreate this project?",
-        style=custom_style,
-        default=True
-    ).ask()
+
+    print(
+        Panel(
+            f"[bold cyan]Project Configuration[/]\n\n{preview_text}",
+            title="Gentem",
+            expand=False,
+        )
+    )
+
+    return questionary.confirm("\nCreate this project?", style=custom_style, default=True).ask()
 
 
 def run_init(
@@ -266,7 +260,7 @@ def run_init(
     verbose: bool = False,
 ) -> None:
     """Run the interactive project creation wizard.
-    
+
     Args:
         skip_prompts: Skip prompts and use defaults.
         preset: Use a preset configuration.
@@ -274,15 +268,16 @@ def run_init(
         verbose: Show verbose output.
     """
     print("\n")
-    print(Panel(
-        "[bold cyan]Welcome to Gentem![/]\n"
-        "Let's create a new Python project together.",
-        title="Gentem",
-        expand=False,
-        border_style="cyan",
-    ))
+    print(
+        Panel(
+            "[bold cyan]Welcome to Gentem![/]\n" "Let's create a new Python project together.",
+            title="Gentem",
+            expand=False,
+            border_style="cyan",
+        )
+    )
     print("\n")
-    
+
     if preset:
         # Apply preset
         if preset == "minimal":
@@ -315,18 +310,18 @@ def run_init(
         else:
             print(f"[red]Unknown preset: {preset}[/]")
             return
-        
+
         # Get required info
         project_name = get_project_name()
         description = get_description()
         author = get_author()
         license_type = get_license()
-        
+
         if project_type == "fastapi":
             fastapi_options = get_fastapi_options()
         else:
             fastapi_options = None
-        
+
         if not skip_prompts:
             should_create = show_preview(
                 project_name=project_name,
@@ -354,13 +349,13 @@ def run_init(
         project_type = get_project_type()
         python_versions = get_python_versions()
         license_type = get_license()
-        
+
         # FastAPI-specific options
         if project_type == "fastapi":
             fastapi_options = get_fastapi_options()
         else:
             fastapi_options = None
-        
+
         # Additional options
         if project_type != "script":
             add_cli = get_add_cli()
@@ -370,11 +365,11 @@ def run_init(
             add_cli = False
             add_docker = False
             add_docs = False
-        
+
         testing_framework = get_testing_framework()
         linting = get_linting()
         ci_provider = get_ci_provider()
-        
+
         # Show preview
         if not skip_prompts:
             should_create = show_preview(
@@ -395,17 +390,17 @@ def run_init(
             if not should_create:
                 print("[yellow]Project creation cancelled.[/]")
                 return
-    
+
     # Create the project
     if project_type == "fastapi":
         # Use fastapi command
         from gentem.commands.fastapi import create_fastapi_project
-        
+
         if verbose:
             print(f"Creating FastAPI project: {project_name}")
             print(f"Async mode: {fastapi_options.get('async_mode', False)}")
             print(f"Database type: {fastapi_options.get('db_type', '')}")
-        
+
         create_fastapi_project(
             project_name=project_name,
             async_mode=fastapi_options.get("async_mode", False) if fastapi_options else False,
@@ -420,7 +415,7 @@ def run_init(
         if verbose:
             print(f"Creating project: {project_name}")
             print(f"Project type: {project_type}")
-        
+
         create_new_project(
             project_name=project_name,
             project_type=project_type,
@@ -430,8 +425,10 @@ def run_init(
             dry_run=dry_run,
             verbose=verbose,
         )
-    
+
     # Note: Additional features (Docker, docs, CI/CD) would be added here
     # as part of the gentem add command implementation
     if add_docker or add_docs or ci_provider != "none":
-        print("\n[yellow]Note: Additional features (Docker, docs, CI/CD) will be available via 'gentem add' command.[/]")
+        print(
+            "\n[yellow]Note: Additional features (Docker, docs, CI/CD) will be available via 'gentem add' command.[/]"
+        )

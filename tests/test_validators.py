@@ -3,12 +3,12 @@
 import pytest
 
 from gentem.utils.validators import (
-    validate_project_name,
-    validate_python_identifier,
-    validate_license_type,
-    validate_project_type,
-    validate_db_type,
     ValidationError,
+    validate_db_type,
+    validate_license_type,
+    validate_project_name,
+    validate_project_type,
+    validate_python_identifier,
 )
 
 

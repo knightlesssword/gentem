@@ -1,27 +1,24 @@
 """Tests for the init command module."""
 
-from pathlib import Path
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import patch
 
 from gentem.commands.init import (
-    run_init,
-    get_project_name,
-    get_description,
-    get_author,
-    get_project_type,
-    get_python_versions,
-    get_license,
+    custom_style,
     get_add_cli,
     get_add_docker,
     get_add_docs,
-    get_testing_framework,
-    get_linting,
+    get_author,
     get_ci_provider,
+    get_description,
     get_fastapi_options,
+    get_license,
+    get_linting,
+    get_project_name,
+    get_project_type,
+    get_python_versions,
+    get_testing_framework,
+    run_init,
     show_preview,
-    custom_style,
 )
 
 
@@ -506,7 +503,9 @@ class TestRunInit:
                     run_init(skip_prompts=True, preset="minimal", verbose=True)
                     mock_create.assert_called_once()
                     # Check that verbose prints were made
-                    assert any("Creating project" in str(call) for call in mock_print.call_args_list)
+                    assert any(
+                        "Creating project" in str(call) for call in mock_print.call_args_list
+                    )
 
     def test_run_init_cancelled(self):
         """Test run_init when user cancels."""
@@ -540,7 +539,9 @@ class TestRunInit:
                     run_init(skip_prompts=False, verbose=False)
                     mock_create.assert_not_called()
                     # Check that cancellation message was printed
-                    assert any("cancelled" in str(call).lower() for call in mock_print.call_args_list)
+                    assert any(
+                        "cancelled" in str(call).lower() for call in mock_print.call_args_list
+                    )
 
 
 class TestCustomStyle:
@@ -551,4 +552,5 @@ class TestCustomStyle:
         assert custom_style is not None
         # Style is a prompt_toolkit Style object
         from prompt_toolkit.styles import Style as PromptStyle
+
         assert isinstance(custom_style, PromptStyle)
