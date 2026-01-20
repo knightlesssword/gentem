@@ -12,6 +12,7 @@ from gentem.commands.new import (
     generate_class_name,
     generate_context,
     get_project_files,
+    get_license_content,
 )
 
 
@@ -145,3 +146,58 @@ class TestGetProjectFiles:
         assert f"myscript/myscript.py" in files
         assert "src/" not in files
         assert "tests/" not in files
+
+
+class TestGetLicenseContent:
+    """Tests for get_license_content function."""
+
+    def test_mit_license(self):
+        """Test MIT license content generation."""
+        context = {"year": 2024, "author": "John Doe"}
+        license_content = get_license_content("mit", context)
+
+        assert "MIT License" in license_content
+        assert "John Doe" in license_content
+        assert "2024" in license_content
+
+    def test_apache_license(self):
+        """Test Apache license content generation."""
+        context = {"year": 2024, "author": "John Doe"}
+        license_content = get_license_content("apache", context)
+
+        assert "Apache License" in license_content
+        assert "Version 2.0" in license_content
+        assert "http://www.apache.org/" in license_content
+
+    def test_gpl_license(self):
+        """Test GPL license content generation."""
+        context = {"year": 2024, "author": "John Doe"}
+        license_content = get_license_content("gpl", context)
+
+        assert "GNU GENERAL PUBLIC LICENSE" in license_content
+        assert "John Doe" in license_content
+        assert "2024" in license_content
+
+    def test_bsd_license(self):
+        """Test BSD 3-Clause license content generation."""
+        context = {"year": 2024, "author": "John Doe"}
+        license_content = get_license_content("bsd", context)
+
+        assert "BSD 3-Clause License" in license_content
+        assert "John Doe" in license_content
+        assert "2024" in license_content
+        assert "Redistribution and use in source and binary forms" in license_content
+
+    def test_none_license(self):
+        """Test that empty license returns empty string."""
+        context = {"year": 2024, "author": "John Doe"}
+        license_content = get_license_content("none", context)
+
+        assert license_content == ""
+
+    def test_unknown_license(self):
+        """Test that unknown license returns empty string."""
+        context = {"year": 2024, "author": "John Doe"}
+        license_content = get_license_content("unknown", context)
+
+        assert license_content == ""

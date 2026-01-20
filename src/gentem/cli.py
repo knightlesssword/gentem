@@ -63,7 +63,7 @@ def new_command(
         "mit",
         "--license",
         "-l",
-        help="License type: mit, apache, gpl, or none.",
+        help="License type: mit, apache, gpl, bsd, or none.",
     ),
     dry_run: bool = typer.Option(
         False,

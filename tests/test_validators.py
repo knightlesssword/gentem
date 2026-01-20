@@ -71,6 +71,9 @@ class TestValidateLicenseType:
         assert validate_license_type("MIT") == "mit"
         assert validate_license_type("apache") == "apache"
         assert validate_license_type("gpl") == "gpl"
+        assert validate_license_type("GPL") == "gpl"
+        assert validate_license_type("bsd") == "bsd"
+        assert validate_license_type("BSD") == "bsd"
         assert validate_license_type("none") == "none"
         assert validate_license_type("") == ""
 
