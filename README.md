@@ -17,6 +17,7 @@ A Python CLI template boilerplate generator for quickly scaffolding Python proje
 - **Project Scaffolding**: Generate Python projects with a single command
 - **Multiple Project Types**: Support for library, CLI tool, and script projects
 - **FastAPI Templates**: Pre-configured FastAPI project templates with optional database support
+- **Interactive Wizard**: `gentem init` for guided project creation with presets
 - **Opinionated Structure**: Best practices baked into every template
 - **Interactive Preview**: `--dry-run` option to preview before creating files
 
@@ -55,6 +56,7 @@ gentem new mylib --type library --author "John Doe" --description "My library"
 gentem new mylib --type library --license mit
 gentem new mylib --type library --license apache
 gentem new mylib --type library --license gpl
+gentem new mylib --type library --license bsd
 
 # Preview without creating files
 gentem new mylib --type library --dry-run
@@ -69,11 +71,32 @@ gentem fastapi myapi
 # Create with async mode and lifespan
 gentem fastapi myapi --async
 
-# Create with database support (asyncpg)
+# Create with PostgreSQL database (asyncpg)
 gentem fastapi myapi --db asyncpg
 
+# Create with SQLite database (aiosqlite)
+gentem fastapi myapi --db sqlite
+
 # Combine options
-gentem fastapi myapi --async --db asyncpg --author "John Doe"
+gentem fastapi myapi --async --db sqlite --author "John Doe"
+```
+
+### Interactive Project Wizard
+
+```bash
+# Start interactive wizard
+gentem init
+
+# Skip prompts with defaults
+gentem init --skip-prompts
+
+# Use a preset
+gentem init --preset minimal
+gentem init --preset cli-tool
+gentem init --preset fastapi
+
+# Preview without creating files
+gentem init --preset fastapi --dry-run
 ```
 
 ## Project Structure
@@ -81,13 +104,24 @@ gentem fastapi myapi --async --db asyncpg --author "John Doe"
 ### Library Template
 ```
 mylib/
-├── src/
-│   └── mylib/
-│       ├── __init__.py
-│       └── core.py
+├── app/
+│   └── __init__.py
 ├── tests/
 │   ├── __init__.py
-│   └── test_core.py
+│   └── test_mylib.py
+├── pyproject.toml
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
+### CLI Tool Template
+```
+mycli/
+├── app/
+│   ├── __init__.py
+│   ├── cli.py
+│   └── main.py
 ├── pyproject.toml
 ├── README.md
 ├── LICENSE
@@ -97,29 +131,29 @@ mylib/
 ### FastAPI Template
 ```
 myapi/
-├── src/
-│   └── myapi/
-│       ├── __init__.py
-│       ├── main.py              # FastAPI application
-│       ├── core/
-│       │   ├── __init__.py
-│       │   ├── config.py        # Settings
-│       │   └── exceptions.py    # Custom exceptions
-│       ├── deps/
-│       │   └── __init__.py      # Dependencies
-│       ├── utils/
-│       │   └── __init__.py      # Utility functions
-│       ├── v1/
-│       │   ├── __init__.py
-│       │   └── apis/
-│       │       ├── __init__.py
-│       │       └── routes.py    # API routes
-│       ├── services/
-│       │   └── __init__.py      # Business logic
-│       ├── schemas/
-│       │   └── __init__.py      # Pydantic schemas
-│       └── models/
-│           └── __init__.py      # SQLAlchemy models
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py        # Settings
+│   │   ├── exceptions.py    # Custom exceptions
+│   │   └── database.py      # Database session (with --db)
+│   ├── deps/
+│   │   └── __init__.py      # Dependencies
+│   ├── utils/
+│   │   └── __init__.py      # Utility functions
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   └── apis/
+│   │       ├── __init__.py
+│   │       └── routes.py    # API routes
+│   ├── services/
+│   │   └── __init__.py      # Business logic
+│   ├── schemas/
+│   │   └── __init__.py      # Pydantic schemas
+│   └── models/
+│       └── __init__.py      # SQLAlchemy models
 ├── .env
 ├── requirements.txt
 ├── .gitignore

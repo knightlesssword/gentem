@@ -113,7 +113,7 @@ def create_fastapi_project(
     db_info = f"Database: {db_type}" if db_type else "No database"
     print(Panel(
         f"[bold]Creating new FastAPI project:[/] [cyan]{project_name}[/]\n"
-        f"[dim]Async:[/] {async_mode} | [dim]{db_info}[/]\n"
+        f"[dim]Async:[/] {str(async_mode)} | [dim]{db_info}[/]\n"
         f"[dim]Author:[/] {context['author']}",
         title="Gentem",
         expand=False,
@@ -212,6 +212,8 @@ def create_fastapi_project_files(
         db_type: Database type.
     """
     slug = context["project_slug"]
+    project_version = context["version"]
+    project_description = context["description"]
 
     # Create directories
     output_path.mkdir(parents=True, exist_ok=True)
@@ -230,10 +232,22 @@ def create_fastapi_project_files(
             "sqlalchemy[asyncio]>=2.0.0",
             "asyncpg>=0.29.0",
         ])
+    elif db_type == "sqlite":
+        requirements.extend([
+            "sqlalchemy[asyncio]>=2.0.0",
+            "aiosqlite>=0.19.0",
+        ])
 
     requirements_content = "\n".join(sorted(requirements))
 
     # Create .env
+    if db_type == "sqlite":
+        db_url = f"sqlite+aiosqlite:///./{slug}.db"
+        db_note = f"DATABASE_URL=sqlite+aiosqlite:///./{slug}.db"
+    else:
+        db_url = f"postgresql+asyncpg://user:password@localhost:5432/{slug}"
+        db_note = f"DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/{slug}"
+
     env_content = f"""# {project_name} Environment Variables
 
 # Application
@@ -242,7 +256,7 @@ DEBUG=true
 API_V1_STR=/api/v1
 
 # Database
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/{slug}
+{db_note}
 """
 
     # Create .gitignore
@@ -334,12 +348,19 @@ logs/
 
     # Create README.md
     async_note = "Async with lifespan" if async_mode else "Sync with lifespan"
-    db_note = "Database support with asyncpg + SQLAlchemy" if db_type == "asyncpg" else "No database"
-    models_note = "(with --db asyncpg)" if db_type == "asyncpg" else ""
+    if db_type == "asyncpg":
+        db_note = "Database support with asyncpg + SQLAlchemy"
+        models_note = "(with --db asyncpg)"
+    elif db_type == "sqlite":
+        db_note = "Database support with aiosqlite + SQLAlchemy"
+        models_note = "(with --db sqlite)"
+    else:
+        db_note = "No database"
+        models_note = ""
 
     readme_content = f"""# {project_name}
 
-{context["description"]}
+{project_description}
 
 ## Features
 
@@ -569,7 +590,7 @@ async def root() -> Dict[str, Any]:
     """Root endpoint."""
     return {{
         "app": "{project_name}",
-        "version": "{context["version"]}",
+        "version": "{project_version}",
         "docs": "/docs",
     }}
 '''
@@ -648,6 +669,71 @@ from app.core.database import Base
 #     id = Column(Integer, primary_key=True, index=True)
 #     email = Column(String, unique=True, index=True)
 ''', encoding="utf-8")
+    elif db_type == "sqlite":
+        # Use regular string instead of f-string to avoid f-string parsing issues
+        # with expressions like settings.debug (which is False)
+        database_py = '''"""Database configuration and session management."""
+
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.orm import DeclarativeBase
+
+from app.core.config import settings
+
+# Create async engine for SQLite
+engine = create_async_engine(
+    settings.database_url,
+    echo=settings.debug,
+    pool_pre_ping=True,
+    connect_args={"check_same_thread": False},
+)
+
+# Create async session factory
+async_session_factory = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+)
+
+
+class Base(DeclarativeBase):
+    """Base class for SQLAlchemy models."""
+    pass
+
+
+async def get_db() -> AsyncSession:
+    """Dependency that provides a database session."""
+    async with async_session_factory() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+
+
+async def init_db() -> None:
+    """Initialize database tables."""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+async def close_db() -> None:
+    """Close database connections."""
+    await engine.dispose()
+'''
+        (core_dir / "database.py").write_text(database_py, encoding="utf-8")
+
+        # Create models module
+        models_dir = app_dir / "models"
+        models_dir.mkdir(parents=True, exist_ok=True)
+        (models_dir / "__init__.py").write_text('''"""SQLAlchemy models."""
+from app.core.database import Base
+
+# Import models here
+# Example:
+# class User(Base):
+#     __tablename__ = "users"
+#     id = Column(Integer, primary_key=True, index=True)
+#     email = Column(String, unique=True, index=True)
+''', encoding="utf-8")
     else:
         # Create empty models __init__.py
         models_dir = app_dir / "models"
@@ -666,7 +752,7 @@ from app.core.database import Base
     # Create main.py
     if async_mode:
         # Only include database imports if database is enabled
-        if db_type == "asyncpg":
+        if db_type in ("asyncpg", "sqlite"):
             lifespan_section = '''
 from contextlib import asynccontextmanager
 
@@ -720,8 +806,8 @@ def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
     app = FastAPI(
         title=settings.app_name,
-        description="{context["description"]}",
-        version="{context["version"]}",
+        description="{project_description}",
+        version="{project_version}",
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url="/openapi.json",
