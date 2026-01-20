@@ -155,6 +155,48 @@ def fastapi_command(
         verbose=verbose,
     )
 
+
+@app.command("init")
+def init_command(
+    skip_prompts: bool = typer.Option(
+        False,
+        "--skip-prompts",
+        "-s",
+        help="Skip prompts and use default values.",
+    ),
+    preset: str = typer.Option(
+        "",
+        "--preset",
+        "-p",
+        help="Preset to use: minimal, cli-tool, fastapi.",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Preview the project structure without creating files.",
+    ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show verbose output.",
+    ),
+) -> None:
+    """Interactive wizard for creating new projects."""
+    from gentem.commands.init import run_init
+
+    if verbose:
+        print("Starting interactive project wizard")
+        print(f"Skip prompts: {skip_prompts}")
+        print(f"Preset: {preset or 'none'}")
+
+    run_init(
+        skip_prompts=skip_prompts,
+        preset=preset or None,
+        dry_run=dry_run,
+        verbose=verbose,
+    )
+
 def main():
     app()
 

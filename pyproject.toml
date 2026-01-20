@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gentem"
-version = "0.1.3"
-description = "A Python CLI template boilerplate generator"
+version = "0.2.0"
+description = "Python CLI template boilerplate generator"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
@@ -28,6 +28,7 @@ dependencies = [
     "typer>=0.9.0",
     "jinja2>=3.1.0",
     "rich>=13.0.0",
+    "questionary>=2.0.0",
 ]
 
 [project.optional-dependencies]

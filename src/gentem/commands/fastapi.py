@@ -665,7 +665,9 @@ from app.core.database import Base
 
     # Create main.py
     if async_mode:
-        lifespan_section = '''
+        # Only include database imports if database is enabled
+        if db_type == "asyncpg":
+            lifespan_section = '''
 from contextlib import asynccontextmanager
 
 from app.core.database import init_db, close_db
@@ -681,6 +683,20 @@ async def lifespan(app):
     # Shutdown
     print("Shutting down...")
     await close_db()
+'''
+        else:
+            lifespan_section = '''
+from contextlib import asynccontextmanager
+
+
+@asynccontextmanager
+async def lifespan(app):
+    """Lifespan context manager for startup and shutdown events."""
+    # Startup
+    print("Starting up...")
+    yield
+    # Shutdown
+    print("Shutting down...")
 '''
         lifespan_arg = "lifespan=lifespan"
     else:

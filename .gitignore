@@ -28,6 +28,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+test_venv/
+testing/
 
 # PyInstaller
 *.manifest

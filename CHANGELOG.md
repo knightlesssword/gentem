@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-01-20
+
+### Added
+
+- New interactive project creation wizard via `gentem init` command with guided prompts ([`ba68bd5`](https://github.com/knightlesssword/gentem/commit/ba68bd5))
+- Presets for quick project setup: minimal, cli-tool, fastapi, and script
+- Comprehensive documentation for all CLI commands ([`docs/COMMANDS.md`](docs/COMMANDS.md))
+- Updated `.gitignore` with additional entries for test environments
+
+### Changed
+
+- Enhanced CLI with new `init` subcommand ([`src/gentem/cli.py`](src/gentem/cli.py))
+- Extended FastAPI command with improved database support ([`src/gentem/commands/fastapi.py`](src/gentem/commands/fastapi.py))
+
 ## [0.1.3] - 2026-01-14
 
 ### Fixed
