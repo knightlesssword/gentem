@@ -24,7 +24,7 @@ class TemplateEngine:
             template_dir: Base directory for templates. If not provided,
                          uses the gentem templates directory.
         """
-        import os
+
         if template_dir:
             self.template_dir = Path(template_dir)
         else:

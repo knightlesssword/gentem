@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from jinja2.exceptions import TemplateNotFound
 
 from gentem.template_engine import TemplateEngine, get_template_engine
 
@@ -52,7 +53,7 @@ class TestGetTemplate:
     def test_get_nonexistent_template(self):
         """Test error when template doesn't exist."""
         engine = TemplateEngine()
-        with pytest.raises(Exception):
+        with pytest.raises(TemplateNotFound):
             engine.get_template("nonexistent/template.j2")
 
 
@@ -65,9 +66,17 @@ class TestRenderTemplate:
         # Use a template that actually uses project_slug - library pyproject
         content = engine.render_template(
             "library/pyproject.toml.j2",
-            {"project_slug": "mytestproject", "author": "Test", "year": 2024,
-             "description": "Test", "license": "MIT", "python_version": "3.10",
-             "python_versions": ["3.10"], "library_enabled": True, "cli_enabled": False},
+            {
+                "project_slug": "mytestproject",
+                "author": "Test",
+                "year": 2024,
+                "description": "Test",
+                "license": "MIT",
+                "python_version": "3.10",
+                "python_versions": ["3.10"],
+                "library_enabled": True,
+                "cli_enabled": False,
+            },
         )
         assert 'name = "mytestproject"' in content
 
@@ -116,9 +125,17 @@ class TestRenderFile:
     def test_render_to_file(self):
         """Test rendering a template to a file."""
         engine = TemplateEngine()
-        context = {"project_slug": "testproject", "author": "Test", "year": 2024,
-                   "description": "Test", "license": "MIT", "python_version": "3.10",
-                   "python_versions": ["3.10"], "library_enabled": True, "cli_enabled": False}
+        context = {
+            "project_slug": "testproject",
+            "author": "Test",
+            "year": 2024,
+            "description": "Test",
+            "license": "MIT",
+            "python_version": "3.10",
+            "python_versions": ["3.10"],
+            "library_enabled": True,
+            "cli_enabled": False,
+        }
 
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / "test_output.txt"

@@ -100,8 +100,6 @@ def get_template_files(project_type: str) -> list[tuple[str, str]]:
         ("base/gitignore.j2", ".gitignore"),
     ]
 
-    project_slug = "{{ project_slug }}"  # Placeholder, will be replaced in rendering
-
     if project_type == "library":
         project_files = [
             ("library/pyproject.toml.j2", "pyproject.toml"),
@@ -236,5 +234,6 @@ def create_new_project(
         # Clean up created directory
         if output_path.exists():
             import shutil
+
             shutil.rmtree(output_path)
         raise SystemExit(1) from e

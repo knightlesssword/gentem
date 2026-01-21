@@ -195,5 +195,6 @@ def create_fastapi_project(
         # Clean up created directory
         if output_path.exists():
             import shutil
+
             shutil.rmtree(output_path)
         raise SystemExit(1) from e
