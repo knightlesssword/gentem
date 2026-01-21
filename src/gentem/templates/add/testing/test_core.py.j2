@@ -1,0 +1,37 @@
+"""Core tests for {{ project_name }}."""
+
+import pytest
+
+
+class TestCore:
+    """Test cases for core functionality."""
+
+    def test_project_info(self, project_slug, project_version):
+        """Test that project info is set correctly."""
+        assert project_slug == "{{ project_slug }}"
+        assert project_version == "{{ version }}"
+
+    def test_sample_data(self, sample_data):
+        """Test that sample data fixture works."""
+        assert sample_data["key"] == "value"
+        assert sample_data["number"] == 42
+        assert len(sample_data["list"]) == 3
+
+
+class TestExample:
+    """Example test cases."""
+
+    def test_import(self):
+        """Test that the main module can be imported."""
+        try:
+            import {{ project_slug }}
+            assert {{ project_slug }} is not None
+        except ImportError:
+            pytest.skip("{{ project_slug }} not installed")
+
+    def test_version_format(self, project_version):
+        """Test that version follows semantic versioning."""
+        parts = project_version.split(".")
+        assert len(parts) >= 2
+        for part in parts[:2]:
+            assert part.isdigit()

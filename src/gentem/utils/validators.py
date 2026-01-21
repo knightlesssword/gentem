@@ -186,3 +186,70 @@ def validate_output_path(path: str, dry_run: bool = False) -> Path:
         )
 
     return output_path
+
+
+def validate_module_type(module_type: str) -> str:
+    """Validate and normalize the module type.
+
+    Args:
+        module_type: The module type to validate.
+
+    Returns:
+        The normalized module type.
+
+    Raises:
+        ValidationError: If the module type is invalid.
+    """
+    valid_modules = {
+        "docker",
+        "docs",
+        "testing",
+        "logging",
+        "database",
+        "ci",
+        "precommit",
+        "poetry",
+    }
+
+    normalized = module_type.lower().strip()
+    if normalized not in valid_modules:
+        raise ValidationError(
+            f"Invalid module type: '{module_type}'. "
+            f"Valid options are: {', '.join(sorted(valid_modules))}"
+        )
+
+    return normalized
+
+
+def validate_project_path(path: str) -> Path:
+    """Validate that the project path exists and contains a project.
+
+    Args:
+        path: The project path to validate.
+
+    Returns:
+        The validated Path object.
+
+    Raises:
+        ValidationError: If the path is invalid.
+    """
+    project_path = Path(path)
+
+    if not project_path.exists():
+        raise ValidationError(f"Project path does not exist: '{path}'")
+
+    if not project_path.is_dir():
+        raise ValidationError(f"Project path is not a directory: '{path}'")
+
+    # Check for project markers (pyproject.toml or setup.py or .gentemrc)
+    has_pyproject = (project_path / "pyproject.toml").exists()
+    has_setup = (project_path / "setup.py").exists()
+    has_gentemrc = (project_path / ".gentemrc").exists()
+
+    if not (has_pyproject or has_setup or has_gentemrc):
+        raise ValidationError(
+            f"'{path}' does not appear to be a valid project directory. "
+            "Expected pyproject.toml, setup.py, or .gentemrc."
+        )
+
+    return project_path

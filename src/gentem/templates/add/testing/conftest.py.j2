@@ -1,0 +1,33 @@
+"""Pytest configuration and fixtures for {{ project_name }}."""
+
+import sys
+from pathlib import Path
+
+import pytest
+
+# Add src to path for imports
+src_path = Path(__file__).parent.parent
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
+
+
+@pytest.fixture(scope="session")
+def project_slug():
+    """Return the project slug."""
+    return "{{ project_slug }}"
+
+
+@pytest.fixture(scope="session")
+def project_version():
+    """Return the project version."""
+    return "{{ version }}"
+
+
+@pytest.fixture
+def sample_data():
+    """Return sample test data."""
+    return {
+        "key": "value",
+        "number": 42,
+        "list": [1, 2, 3],
+    }

@@ -1,0 +1,84 @@
+"""Logging configuration for {{ project_name }}."""
+
+import logging
+import sys
+from pathlib import Path
+from typing import Optional
+
+import yaml
+from rich.logging import RichHandler
+
+
+def setup_logging(
+    config_path: Optional[str] = None,
+    log_level: str = "INFO",
+) -> None:
+    """Set up logging configuration.
+
+    Args:
+        config_path: Path to logging.yaml config file.
+        log_level: Default log level.
+    """
+    # Create logs directory
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True)
+
+    # Determine config path
+    if config_path is None:
+        config_path = Path(__file__).parent.parent / "logging.yaml"
+
+    # Try to load config from file
+    config_file = Path(config_path)
+    if config_file.exists():
+        with open(config_file, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+
+        # Apply configuration
+        logging.config.dictConfig(config)
+    else:
+        # Fallback to basic configuration
+        logging.basicConfig(
+            level=getattr(logging, log_level.upper()),
+            format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            handlers=[
+                RichHandler(rich_tracebacks=True),
+                logging.StreamHandler(sys.stdout),
+            ],
+        )
+
+
+def get_logger(name: str) -> logging.Logger:
+    """Get a logger with the given name.
+
+    Args:
+        name: Name of the logger.
+
+    Returns:
+        Configured logger instance.
+    """
+    return logging.getLogger(name)
+
+
+# Default logger instance
+logger = get_logger(__name__)
+
+
+def log_request(
+    request_id: str,
+    method: str,
+    path: str,
+    status_code: int,
+    duration_ms: float,
+) -> None:
+    """Log an HTTP request.
+
+    Args:
+        request_id: Unique request identifier.
+        method: HTTP method.
+        path: Request path.
+        status_code: HTTP status code.
+        duration_ms: Request duration in milliseconds.
+    """
+    logger.info(
+        f"Request {request_id}: {method} {path} -> {status_code} ({duration_ms:.2f}ms)"
+    )

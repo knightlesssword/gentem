@@ -1,5 +1,7 @@
 """Main CLI entry point for Gentem."""
 
+from pathlib import Path
+
 import typer
 
 from gentem import __version__
@@ -196,6 +198,62 @@ def init_command(
         dry_run=dry_run,
         verbose=verbose,
     )
+
+
+@app.command("add")
+def add_command(
+    modules: list[str] = typer.Argument(
+        ...,
+        help="Module(s) to add: docker, docs, testing, logging, database, ci, precommit, poetry.",
+    ),
+    project_path: Path = typer.Option(
+        ".",
+        "--path",
+        "-p",
+        help="Project directory path (default: current directory).",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Preview the changes without creating files.",
+    ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show verbose output.",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help="Overwrite existing files without prompting.",
+    ),
+) -> None:
+    """Add one or more modules to an existing project (docker, docs, testing, logging, database, ci, precommit, poetry)."""
+    from gentem.commands.add import add_module, add_modules
+
+    if verbose:
+        print(f"Adding modules: {', '.join(modules)}")
+        print(f"Project path: {project_path}")
+        print(f"Force mode: {force}")
+
+    if len(modules) == 1:
+        add_module(
+            module_type=modules[0],
+            project_path=str(project_path),
+            dry_run=dry_run,
+            verbose=verbose,
+            force=force,
+        )
+    else:
+        add_modules(
+            module_types=modules,
+            project_path=str(project_path),
+            dry_run=dry_run,
+            verbose=verbose,
+            force=force,
+        )
 
 
 def main():

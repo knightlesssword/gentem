@@ -18,6 +18,7 @@ A Python CLI template boilerplate generator for quickly scaffolding Python proje
 - **Multiple Project Types**: Support for library, CLI tool, and script projects
 - **FastAPI Templates**: Pre-configured FastAPI project templates with optional database support
 - **Interactive Wizard**: `gentem init` for guided project creation with presets
+- **Module Addition**: `gentem add` to add Docker, Docs, Testing, Logging, and Database modules to existing projects
 - **Opinionated Structure**: Best practices baked into every template
 - **Interactive Preview**: `--dry-run` option to preview before creating files
 
@@ -97,6 +98,49 @@ gentem init --preset fastapi
 
 # Preview without creating files
 gentem init --preset fastapi --dry-run
+```
+
+### Adding Modules to Existing Projects
+
+```bash
+# Add Docker support to current project
+gentem add docker
+
+# Add Docker to specific project
+gentem add docker -p ./myapi
+
+# Add documentation (MkDocs)
+gentem add docs
+
+# Add testing module (pytest fixtures)
+gentem add testing
+
+# Add logging configuration
+gentem add logging
+
+# Add database migrations (Alembic)
+gentem add database
+
+# Add CI/CD workflow (GitHub Actions)
+gentem add ci
+
+# Add pre-commit hooks
+gentem add precommit
+
+# Add Poetry configuration
+gentem add poetry
+
+# Add multiple modules at once
+gentem add docker docs testing
+
+# Preview changes without creating files
+gentem add docker --dry-run
+
+# Overwrite existing files
+gentem add docker --force
+
+# Show verbose output
+gentem add docker -v
 ```
 
 ## Project Structure
