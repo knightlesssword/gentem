@@ -1,0 +1,16 @@
+"""Tests for {{ project_name }}."""
+
+import pytest
+
+from {{ project_slug }} import __version__
+
+
+def test_version():
+    """Test that version is set correctly."""
+    assert __version__ == "{{ version }}"
+
+
+def test_import():
+    """Test that the package can be imported."""
+    import {{ project_slug }}
+    assert {{ project_slug }} is not None

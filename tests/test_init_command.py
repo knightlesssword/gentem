@@ -444,15 +444,17 @@ class TestRunInit:
                 "My FastAPI API",
                 "John Doe",
             ]
+            # Note: select is used for license and db_type (NOT for async_mode)
+            # async_mode uses confirm() which is mocked separately below
             mock_q.select.return_value.ask.side_effect = [
                 "mit",  # license
-                True,  # async mode
                 "asyncpg",  # db type
             ]
+            # All confirm() calls return True (async_mode prompt + final confirmation)
             mock_q.confirm.return_value.ask.return_value = True
 
-            # create_fastapi_project is imported inside the function
-            with patch("gentem.commands.fastapi.create_fastapi_project") as mock_create:
+            # create_fastapi_project is imported from fastapi_jinja2
+            with patch("gentem.commands.fastapi_jinja2.create_fastapi_project") as mock_create:
                 run_init(skip_prompts=False, preset="fastapi")
                 mock_create.assert_called_once()
                 call_kwargs = mock_create.call_args[1]

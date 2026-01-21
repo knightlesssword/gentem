@@ -1,0 +1,85 @@
+# {{ project_name }}
+
+{{ description }}
+
+## Features
+
+- FastAPI REST API
+{% if async_mode %}
+- Async with lifespan
+{% else %}
+- Sync with lifespan
+{% endif %}
+{% if has_database %}
+{% if db_type == "asyncpg" %}
+- Database support with asyncpg + SQLAlchemy
+{% elif db_type == "sqlite" %}
+- Database support with aiosqlite + SQLAlchemy
+{% endif %}
+{% else %}
+- No database
+{% endif %}
+- Project structure with core, deps, utils, v1/apis, services, schemas
+- Exception handlers
+- Middleware setup
+- Health check endpoint
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Running
+
+```bash
+uvicorn {{ project_slug }}.main:app --reload
+```
+
+## API Documentation
+
+Once running, access:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- OpenAPI: http://localhost:8000/openapi.json
+
+## Project Structure
+
+```
+{{ project_slug }}/
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py        # Settings
+│   │   └── exceptions.py    # Custom exceptions
+{% if has_database %}
+│   │   └── database.py      # Database configuration
+{% endif %}
+│   ├── deps/
+│   │   └── __init__.py      # Dependencies
+│   ├── utils/
+│   │   └── __init__.py      # Utility functions
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   └── apis/
+│   │       ├── __init__.py
+│   │       └── routes.py    # API routes
+│   ├── services/
+│   │   └── __init__.py      # Business logic
+│   ├── schemas/
+│   │   └── __init__.py      # Pydantic schemas
+{% if has_database %}
+│   └── models/
+│       └── __init__.py      # SQLAlchemy models
+{% endif %}
+├── .env
+├── requirements.txt
+├── .gitignore
+└── README.md
+```
+
+## License
+
+This project is licensed under the {{ license }} License.

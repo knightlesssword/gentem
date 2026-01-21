@@ -78,7 +78,7 @@ def new_command(
     ),
 ) -> None:
     """Create a new Python project."""
-    from gentem.commands.new import create_new_project
+    from gentem.commands.new_jinja2 import create_new_project
 
     if verbose:
         print(f"Creating project: {project_name}")
@@ -138,7 +138,7 @@ def fastapi_command(
     ),
 ) -> None:
     """Create a new FastAPI project with opinionated structure."""
-    from gentem.commands.fastapi import create_fastapi_project
+    from gentem.commands.fastapi_jinja2 import create_fastapi_project
 
     if verbose:
         print(f"Creating FastAPI project: {project_name}")

@@ -1,0 +1,13 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+pydantic-settings>=2.0.0
+python-multipart>=0.0.6
+{% if has_database %}
+sqlalchemy[asyncio]>=2.0.0
+{% if db_type == "asyncpg" %}
+asyncpg>=0.29.0
+{% elif db_type == "sqlite" %}
+aiosqlite>=0.19.0
+{% endif %}
+{% endif %}

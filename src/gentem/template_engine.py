@@ -24,12 +24,14 @@ class TemplateEngine:
             template_dir: Base directory for templates. If not provided,
                          uses the gentem templates directory.
         """
+        import os
         if template_dir:
             self.template_dir = Path(template_dir)
         else:
-            # Find the package directory
-            package_dir = Path(__file__).parent.parent
-            self.template_dir = package_dir / "templates"
+            # Find the package directory (gentem/)
+            # __file__ is at src/gentem/template_engine.py
+            # parent is src/gentem, and templates is at src/gentem/templates
+            self.template_dir = Path(__file__).parent / "templates"
 
         self.env = Environment(
             loader=FileSystemLoader(str(self.template_dir)),

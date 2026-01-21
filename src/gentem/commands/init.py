@@ -7,7 +7,7 @@ from questionary import Style
 from rich import print
 from rich.panel import Panel
 
-from gentem.commands.new import create_new_project
+from gentem.commands.new_jinja2 import create_new_project
 from gentem.utils.validators import (
     ValidationError,
     validate_project_name,
@@ -250,7 +250,7 @@ def show_preview(
         )
     )
 
-    return questionary.confirm("\nCreate this project?", style=custom_style, default=True).ask()
+    return questionary.confirm("Create this project?", style=custom_style, default=True).ask()
 
 
 def run_init(
@@ -394,7 +394,7 @@ def run_init(
     # Create the project
     if project_type == "fastapi":
         # Use fastapi command
-        from gentem.commands.fastapi import create_fastapi_project
+        from gentem.commands.fastapi_jinja2 import create_fastapi_project
 
         if verbose:
             print(f"Creating FastAPI project: {project_name}")

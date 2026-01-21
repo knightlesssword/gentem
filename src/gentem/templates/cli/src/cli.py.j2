@@ -1,0 +1,18 @@
+"""CLI commands for {{ project_name }}."""
+
+import typer
+from rich import print
+
+app = typer.Typer()
+
+
+@app.command()
+def hello(name: str = "World") -> None:
+    """Say hello to someone."""
+    print(f"Hello, {name}!")
+
+
+@app.command()
+def version() -> None:
+    """Show the version."""
+    print("{{ version }}")

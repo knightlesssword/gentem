@@ -1,0 +1,34 @@
+# {{ project_name }}
+
+{{ description }}
+
+## Installation
+
+```bash
+pip install {{ project_slug }}
+```
+
+## Usage
+
+```bash
+{{ project_slug }} --help
+{{ project_slug }} hello --name "World"
+```
+
+## Development
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+
+# Format code
+black .
+ruff check --fix .
+```
+
+## License
+
+This project is licensed under the {{ license }} License - see the [LICENSE](LICENSE) file for details.
