@@ -33,6 +33,7 @@ gentem --help       # Show main help
 gentem new --help   # Show help for 'new' command
 gentem fastapi --help   # Show help for 'fastapi' command
 gentem init --help      # Show help for 'init' command
+gentem add --help       # Show help for 'add' command
 ```
 
 ---
@@ -208,6 +209,99 @@ gentem init --skip-prompts --preset fastapi -v
 
 ---
 
+## Command: `gentem add`
+
+Add modules to an existing project (Docker, docs, testing, logging, database, CI, pre-commit, Poetry).
+
+### Basic Usage
+
+```bash
+gentem add <MODULE_TYPE>
+```
+
+### Available Modules
+
+| Module | Description |
+|--------|-------------|
+| `docker` | Add Docker configuration (Dockerfile, docker-compose.yml, .dockerignore) |
+| `docs` | Add MkDocs documentation structure |
+| `testing` | Add pytest configuration and test files |
+| `logging` | Add logging configuration (YAML + Python setup) |
+| `database` | Add Alembic database migrations setup |
+| `ci` | Add GitHub Actions CI workflow |
+| `precommit` | Add pre-commit hooks configuration |
+| `poetry` | Add Poetry dependency management (regenerates pyproject.toml) |
+
+### Options
+
+| Option | Short | Description | Default |
+|--------|-------|-------------|---------|
+| `--project-path` | `-p` | Path to the existing project | `.` |
+| `--dry-run` | - | Preview the module addition without creating files | `False` |
+| `--verbose` | `-v` | Show verbose output | `False` |
+| `--force` | `-f` | Overwrite existing files without prompting | `False` |
+
+### Command Combinations
+
+```bash
+# Add Docker support to current project
+gentem add docker
+
+# Add documentation to a specific project
+gentem add docs --project-path /path/to/myproject
+gentem add docs -p /path/to/myproject
+
+# Add testing framework
+gentem add testing
+
+# Add logging configuration
+gentem add logging
+
+# Add database migrations (Alembic)
+gentem add database
+
+# Add CI/CD workflow
+gentem add ci
+
+# Add pre-commit hooks
+gentem add precommit
+
+# Convert to Poetry-based project
+gentem add poetry
+
+# Preview without creating files
+gentem add docker --dry-run
+
+# Verbose output
+gentem add docker -v
+
+# Force overwrite existing files
+gentem add docker --force
+
+# Add multiple modules at once
+gentem add docker testing docs
+
+# Add module to specific project with all options
+gentem add docker -p myproject -v -f
+```
+
+### Next Steps After Adding Modules
+
+After adding modules, you'll see next steps in the output:
+
+| Module | Next Steps |
+|--------|------------|
+| `docker` | `docker build -t myapp .` and `docker-compose up -d` |
+| `docs` | `pip install mkdocs mkdocstrings` and `mkdocs serve` |
+| `testing` | `pip install pytest pytest-asyncio` and `pytest tests/` |
+| `logging` | `pip install pyyaml rich` |
+| `database` | `pip install alembic`, `alembic revision --autogenerate -m 'initial'`, `alembic upgrade head` |
+| `ci` | `git add .`, `git commit -m 'Add CI workflow'`, `git push origin main` |
+| `precommit` | `pip install pre-commit`, `pre-commit install`, `pre-commit run --all-files` |
+| `poetry` | `pip install poetry`, `poetry install`, `poetry add <package>` |
+
+---
+
 ## All Commands Quick Reference
 
 ```
@@ -228,6 +322,16 @@ gentem fastapi <NAME> --db <DB>  # With database
 gentem init                      # Interactive wizard
 gentem init --preset <PRESET>    # With preset
 gentem init -s                   # Skip prompts
+
+gentem add <MODULE>              # Add module to existing project
+gentem add docker                # Add Docker configuration
+gentem add docs                  # Add documentation
+gentem add testing               # Add testing framework
+gentem add logging               # Add logging configuration
+gentem add database              # Add database migrations
+gentem add ci                    # Add CI workflow
+gentem add precommit             # Add pre-commit hooks
+gentem add poetry                # Add Poetry support
 ```
 
 ---
