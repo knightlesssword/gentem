@@ -126,6 +126,79 @@ def get_template_files(project_type: str) -> list[tuple[str, str]]:
     return base_templates + project_files
 
 
+def get_license_content(license_type: str, context: dict[str, Any]) -> str:
+    """Get license content based on license type.
+
+    Args:
+        license_type: Type of license.
+        context: Template context with year and author.
+
+    Returns:
+        License content as string.
+    """
+    valid_licenses = ["mit", "apache", "gpl", "bsd"]
+    if license_type not in valid_licenses or license_type == "none":
+        return ""
+
+    engine = TemplateEngine()
+    license_template_name = get_license_template_name(license_type)
+    license_template_path = f"base/{license_template_name}.j2"
+
+    try:
+        return engine.render_template(license_template_path, context)
+    except Exception:
+        return ""
+
+
+def get_project_files(project_name: str, project_type: str) -> list[str]:
+    """Get list of project files that would be created.
+
+    Args:
+        project_name: Name of the project.
+        project_type: Type of project (library, cli, script).
+
+    Returns:
+        List of file paths as strings.
+    """
+    project_slug = generate_slug(project_name)
+    files: list[str] = []
+
+    # Always include project directory
+    files.append(f"{project_slug}/")
+
+    if project_type == "library":
+        files.extend([
+            f"{project_slug}/pyproject.toml",
+            f"{project_slug}/README.md",
+            f"{project_slug}/LICENSE",
+            f"{project_slug}/.gitignore",
+            f"{project_slug}/app/",
+            f"{project_slug}/app/__init__.py",
+            f"{project_slug}/tests/",
+            f"{project_slug}/tests/__init__.py",
+            f"{project_slug}/tests/test_{project_slug}.py",
+        ])
+    elif project_type == "cli":
+        files.extend([
+            f"{project_slug}/pyproject.toml",
+            f"{project_slug}/README.md",
+            f"{project_slug}/LICENSE",
+            f"{project_slug}/.gitignore",
+            f"{project_slug}/app/",
+            f"{project_slug}/app/__init__.py",
+            f"{project_slug}/app/cli.py",
+            f"{project_slug}/app/main.py",
+        ])
+    elif project_type == "script":
+        files.extend([
+            f"{project_slug}/{project_slug}.py",
+            f"{project_slug}/LICENSE",
+            f"{project_slug}/.gitignore",
+        ])
+
+    return files
+
+
 def create_new_project(
     project_name: str,
     project_type: str = "library",

@@ -1,6 +1,6 @@
 """Tests for the new command module."""
 
-from gentem.commands.new import (
+from gentem.commands.new_jinja2 import (
     generate_class_name,
     generate_context,
     generate_slug,
